@@ -1,0 +1,8 @@
+.env
+.git
+.github
+vendor
+terraform/.terraform
+terraform/*.tfstate
+terraform/*.tfstate.*
+README.md

@@ -1,0 +1,2053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="CloudCart - AWS Cloud E-Commerce Platform">
+<title>CloudCart — AWS E-Commerce Platform</title>
+
+<style>
+:root {
+  --bg: #070b14;
+  --bg-soft: #0b1120;
+  --panel: rgba(15, 23, 42, 0.78);
+  --panel-solid: #0f172a;
+  --panel-hover: #131d31;
+  --border: rgba(148, 163, 184, 0.14);
+  --border-bright: rgba(148, 163, 184, 0.24);
+
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --muted-light: #cbd5e1;
+
+  --primary: #6366f1;
+  --primary-light: #818cf8;
+  --cyan: #22d3ee;
+  --green: #34d399;
+  --red: #fb7185;
+  --yellow: #fbbf24;
+
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(99, 102, 241, 0.16), transparent 30%),
+    radial-gradient(circle at 90% 10%, rgba(34, 211, 238, 0.10), transparent 28%),
+    linear-gradient(145deg, #050811 0%, #0a1020 48%, #070b14 100%);
+}
+
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px 16px;
+
+  background: rgba(7, 11, 20, 0.88);
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(22px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 10px 28px;
+}
+
+.logo-mark {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+
+  background:
+    linear-gradient(135deg, var(--primary), var(--cyan));
+
+  box-shadow:
+    0 8px 25px rgba(99, 102, 241, 0.35);
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.logo-text span {
+  color: var(--primary-light);
+}
+
+.nav-title {
+  padding: 0 12px;
+  margin: 4px 0 10px;
+
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 11px 12px;
+
+  color: var(--muted);
+  text-decoration: none;
+
+  border-radius: 11px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  transition: 0.2s ease;
+}
+
+.nav a:hover,
+.nav a.active {
+  color: white;
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.nav a.active {
+  box-shadow: inset 3px 0 0 var(--primary-light);
+}
+
+.nav-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.cloud-status {
+  padding: 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: rgba(15, 23, 42, 0.65);
+}
+
+.status-title {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+  width: calc(100% - 250px);
+  margin-left: 250px;
+  min-height: 100vh;
+  padding: 30px 34px 50px;
+}
+
+.topbar {
+  max-width: 1400px;
+  margin: 0 auto 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.page-label {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: clamp(25px, 3vw, 34px);
+  line-height: 1.1;
+  letter-spacing: -1.3px;
+}
+
+.page-title span {
+  background: linear-gradient(90deg, #fff, #a5b4fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aws-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 13px;
+
+  border: 1px solid rgba(52, 211, 153, 0.18);
+  border-radius: 10px;
+
+  background: rgba(52, 211, 153, 0.06);
+
+  color: #a7f3d0;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content {
+  max-width: 1400px;
+  margin: auto;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+
+  padding: 28px 30px;
+  margin-bottom: 20px;
+
+  border: 1px solid var(--border);
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(99, 102, 241, 0.13),
+      rgba(34, 211, 238, 0.05) 55%,
+      rgba(15, 23, 42, 0.7)
+    );
+
+  box-shadow: var(--shadow);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -80px;
+  top: -140px;
+
+  border-radius: 50%;
+
+  background: rgba(99, 102, 241, 0.18);
+  filter: blur(55px);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 12px;
+
+  color: #a5b4fc;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.hero h2 {
+  margin: 0 0 8px;
+
+  font-size: clamp(22px, 3vw, 30px);
+  letter-spacing: -1px;
+}
+
+.hero p {
+  max-width: 680px;
+  margin: 0;
+
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+
+  padding: 18px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  background: rgba(15, 23, 42, 0.7);
+
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-bright);
+}
+
+.stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 13px;
+}
+
+.stat-icon {
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--primary-light);
+
+  font-size: 15px;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.stat-sub {
+  margin-top: 4px;
+
+  color: #64748b;
+  font-size: 10px;
+}
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.panel {
+  margin-bottom: 20px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  background: rgba(15, 23, 42, 0.72);
+
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.18);
+
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 19px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.panel-icon {
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  color: var(--cyan);
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.panel-title {
+  margin: 0;
+
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.panel-subtitle {
+  margin-top: 3px;
+
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.service-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 9px;
+
+  border-radius: 8px;
+
+  color: #a7f3d0;
+  background: rgba(52, 211, 153, 0.07);
+
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.service-badge .status-dot {
+  width: 5px;
+  height: 5px;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-area {
+  padding: 18px 20px;
+
+  border-bottom: 1px solid var(--border);
+
+  background: rgba(2, 6, 23, 0.20);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 0.8fr 0.8fr auto auto;
+  gap: 9px;
+}
+
+.field {
+  position: relative;
+}
+
+input {
+  width: 100%;
+  height: 39px;
+
+  padding: 0 12px;
+
+  color: var(--text);
+  background: rgba(15, 23, 42, 0.85);
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  outline: none;
+
+  font-family: inherit;
+  font-size: 11px;
+
+  transition: 0.2s ease;
+}
+
+input::placeholder {
+  color: #64748b;
+}
+
+input:focus {
+  border-color: rgba(129, 140, 248, 0.65);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.09);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+button {
+  height: 39px;
+
+  padding: 0 14px;
+
+  border: 0;
+  border-radius: 9px;
+
+  color: white;
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    #4f46e5
+  );
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.22);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.secondary {
+  color: var(--muted-light);
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--border);
+}
+
+button.secondary:hover {
+  box-shadow: none;
+  background: rgba(148, 163, 184, 0.13);
+}
+
+button.danger {
+  color: #fecdd3;
+  background: rgba(251, 113, 133, 0.08);
+  border: 1px solid rgba(251, 113, 133, 0.13);
+}
+
+button.danger:hover {
+  box-shadow: 0 7px 18px rgba(251, 113, 133, 0.12);
+}
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.msg {
+  min-height: 18px;
+  margin-top: 9px;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.msg.ok {
+  color: var(--green);
+}
+
+.msg.err {
+  color: var(--red);
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  font-size: 11px;
+}
+
+th {
+  padding: 12px 20px;
+
+  color: #64748b;
+  background: rgba(2, 6, 23, 0.18);
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+
+  text-align: left;
+  white-space: nowrap;
+}
+
+td {
+  padding: 14px 20px;
+
+  color: var(--muted-light);
+
+  border-top: 1px solid var(--border);
+
+  white-space: nowrap;
+}
+
+tbody tr {
+  transition: background 0.15s ease;
+}
+
+tbody tr:hover {
+  background: rgba(99, 102, 241, 0.035);
+}
+
+.product-name,
+.user-name {
+  color: white;
+  font-weight: 700;
+}
+
+.id-cell {
+  color: #64748b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.price {
+  color: #a5b4fc;
+  font-weight: 750;
+}
+
+.stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stock-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.category {
+  display: inline-flex;
+  padding: 4px 7px;
+
+  border-radius: 6px;
+
+  color: #c4b5fd;
+  background: rgba(139, 92, 246, 0.08);
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.row-actions button {
+  height: 28px;
+  padding: 0 9px;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty {
+  padding: 35px 20px;
+
+  color: #64748b;
+  text-align: center;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+  max-width: 1400px;
+  margin: 35px auto 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  color: #475569;
+  font-size: 10px;
+}
+
+.footer strong {
+  color: #64748b;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+.mobile-header {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    width: 100%;
+    margin-left: 0;
+    padding: 20px 15px 40px;
+  }
+
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+  }
+
+  .topbar {
+    margin-bottom: 20px;
+  }
+
+  .topbar .page-label {
+    display: none;
+  }
+
+  .top-actions {
+    display: none;
+  }
+
+  .hero {
+    padding: 23px 20px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .panel-header {
+    align-items: flex-start;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .page-title {
+    font-size: 25px;
+  }
+
+  .panel-header {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      <div class="logo-mark">C</div>
+
+      <div class="logo-text">
+        Cloud<span>Cart</span>
+      </div>
+    </div>
+
+    <div class="nav-title">Workspace</div>
+
+    <nav class="nav">
+
+      <a href="#dashboard" class="active">
+        <span class="nav-icon">⌂</span>
+        Dashboard
+      </a>
+
+      <a href="#products">
+        <span class="nav-icon">▣</span>
+        Products
+      </a>
+
+      <a href="#users">
+        <span class="nav-icon">♙</span>
+        Users
+      </a>
+
+    </nav>
+
+    <div class="nav-title" style="margin-top:28px;">
+      Infrastructure
+    </div>
+
+    <nav class="nav">
+
+      <a href="#products">
+        <span class="nav-icon">◈</span>
+        AWS RDS
+      </a>
+
+      <a href="#users">
+        <span class="nav-icon">◇</span>
+        DynamoDB
+      </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+      <div class="cloud-status">
+
+        <div class="status-title">
+          CloudCart Services
+        </div>
+
+        <div class="status-row">
+          <span class="status-dot"></span>
+          AWS services connected
+        </div>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <main class="main">
+
+    <div class="mobile-header">
+
+      <div class="logo">
+        <div class="logo-mark">C</div>
+
+        <div class="logo-text">
+          Cloud<span>Cart</span>
+        </div>
+      </div>
+
+      <div class="aws-badge">
+        <span class="status-dot"></span>
+        AWS Online
+      </div>
+
+    </div>
+
+    <div class="topbar" id="dashboard">
+
+      <div>
+        <div class="page-label">
+          CLOUDCART / DASHBOARD
+        </div>
+
+        <h1 class="page-title">
+          Cloud <span>Commerce</span>
+        </h1>
+      </div>
+
+      <div class="top-actions">
+
+        <div class="aws-badge">
+          <span class="status-dot"></span>
+          AWS Infrastructure Online
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="content">
+
+      <!-- =================================================
+           HERO
+      ================================================== -->
+
+      <section class="hero">
+
+        <div class="hero-content">
+
+          <div class="hero-eyebrow">
+            ◉ AWS CLOUD PLATFORM
+          </div>
+
+          <h2>
+            Welcome to CloudCart
+          </h2>
+
+          <p>
+            A lightweight cloud-native e-commerce platform powered by
+            AWS RDS MySQL for transactional data and Amazon DynamoDB
+            for user information.
+          </p>
+
+        </div>
+
+      </section>
+
+      <!-- =================================================
+           STATS
+      ================================================== -->
+
+      <section class="stats">
+
+        <div class="stat-card">
+
+          <div class="stat-top">
+
+            <div class="stat-icon">
+              ◈
+            </div>
+
+            <div class="stat-label">
+              AWS RDS
+            </div>
+
+          </div>
+
+          <div class="stat-value" id="productCount">
+            —
+          </div>
+
+          <div class="stat-sub">
+            Products stored in MySQL
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-top">
+
+            <div class="stat-icon">
+              ◇
+            </div>
+
+            <div class="stat-label">
+              DYNAMODB
+            </div>
+
+          </div>
+
+          <div class="stat-value" id="userCount">
+            —
+          </div>
+
+          <div class="stat-sub">
+            Users stored in NoSQL
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-top">
+
+            <div class="stat-icon">
+              $
+            </div>
+
+            <div class="stat-label">
+              CATALOG VALUE
+            </div>
+
+          </div>
+
+          <div class="stat-value" id="catalogValue">
+            ₹0
+          </div>
+
+          <div class="stat-sub">
+            Current inventory value
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-top">
+
+            <div class="stat-icon">
+              ✓
+            </div>
+
+            <div class="stat-label">
+              PLATFORM
+            </div>
+
+          </div>
+
+          <div class="stat-value" style="font-size:19px;">
+            Online
+          </div>
+
+          <div class="stat-sub">
+            API services operational
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- =================================================
+           PRODUCTS
+      ================================================== -->
+
+      <section class="panel" id="products">
+
+        <div class="panel-header">
+
+          <div class="panel-title-wrap">
+
+            <div class="panel-icon">
+              ◈
+            </div>
+
+            <div>
+
+              <h2 class="panel-title">
+                Product Catalog
+              </h2>
+
+              <div class="panel-subtitle">
+                Transactional inventory · AWS RDS MySQL
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="service-badge">
+            <span class="status-dot"></span>
+            RDS Connected
+          </div>
+
+        </div>
+
+        <div class="form-area">
+
+          <form id="productForm">
+
+            <input
+              type="hidden"
+              id="p_id"
+            >
+
+            <div class="form-grid">
+
+              <div class="field">
+                <input
+                  type="text"
+                  id="p_name"
+                  placeholder="Product name"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <input
+                  type="text"
+                  id="p_category"
+                  placeholder="Category"
+                >
+              </div>
+
+              <div class="field">
+                <input
+                  type="number"
+                  step="0.01"
+                  id="p_price"
+                  placeholder="Price"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <input
+                  type="number"
+                  id="p_stock"
+                  placeholder="Stock"
+                >
+              </div>
+
+              <button type="submit">
+                Save Product
+              </button>
+
+              <button
+                type="button"
+                class="secondary"
+                onclick="resetProductForm()"
+              >
+                Clear
+              </button>
+
+            </div>
+
+          </form>
+
+          <div class="msg" id="productMsg"></div>
+
+        </div>
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Inventory</th>
+                <th>Actions</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="productTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+      <!-- =================================================
+           USERS
+      ================================================== -->
+
+      <section class="panel" id="users">
+
+        <div class="panel-header">
+
+          <div class="panel-title-wrap">
+
+            <div
+              class="panel-icon"
+              style="
+                color:#c4b5fd;
+                background:rgba(139,92,246,.08);
+              "
+            >
+              ◇
+            </div>
+
+            <div>
+
+              <h2 class="panel-title">
+                User Directory
+              </h2>
+
+              <div class="panel-subtitle">
+                Customer information · Amazon DynamoDB
+              </div>
+
+            </div>
+
+          </div>
+
+          <div
+            class="service-badge"
+            style="
+              color:#ddd6fe;
+              background:rgba(139,92,246,.07);
+            "
+          >
+            <span
+              class="status-dot"
+              style="
+                background:#a78bfa;
+                box-shadow:0 0 12px rgba(167,139,250,.7);
+              "
+            ></span>
+            DynamoDB Connected
+          </div>
+
+        </div>
+
+        <div class="form-area">
+
+          <form id="userForm">
+
+            <input
+              type="hidden"
+              id="u_id"
+            >
+
+            <div
+              class="form-grid"
+              style="
+                grid-template-columns:
+                1.2fr
+                1.2fr
+                1fr
+                1fr
+                auto
+                auto;
+              "
+            >
+
+              <div class="field">
+                <input
+                  type="text"
+                  id="u_name"
+                  placeholder="Full name"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <input
+                  type="email"
+                  id="u_email"
+                  placeholder="Email address"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <input
+                  type="text"
+                  id="u_phone"
+                  placeholder="Phone"
+                >
+              </div>
+
+              <div class="field">
+                <input
+                  type="text"
+                  id="u_city"
+                  placeholder="City"
+                >
+              </div>
+
+              <button type="submit">
+                Save User
+              </button>
+
+              <button
+                type="button"
+                class="secondary"
+                onclick="resetUserForm()"
+              >
+                Clear
+              </button>
+
+            </div>
+
+          </form>
+
+          <div class="msg" id="userMsg"></div>
+
+        </div>
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>City</th>
+                <th>Actions</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="userTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+      <!-- =================================================
+           FOOTER
+      ================================================== -->
+
+      <footer class="footer">
+
+        <div>
+          <strong>CloudCart</strong>
+          · AWS E-Commerce Demo
+        </div>
+
+        <div>
+          RDS MySQL + DynamoDB
+        </div>
+
+      </footer>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+/* =========================================================
+   API
+========================================================= */
+
+const API = {
+  products: 'api/products.php',
+  users: 'api/users.php',
+};
+
+/* =========================================================
+   PRODUCTS
+========================================================= */
+
+async function loadProducts() {
+
+  try {
+
+    const res = await fetch(API.products);
+
+    if (!res.ok) {
+      throw new Error('Failed to load products');
+    }
+
+    const json = await res.json();
+
+    const data = json.data || [];
+
+    const tbody = document.getElementById('productTable');
+
+    tbody.innerHTML = '';
+
+    document.getElementById('productCount').textContent = data.length;
+
+    let inventoryValue = 0;
+
+    data.forEach(p => {
+
+      inventoryValue +=
+        Number(p.price || 0) *
+        Number(p.stock_qty || 0);
+
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+        <td class="id-cell">
+          #${escapeHTML(p.id)}
+        </td>
+
+        <td>
+          <div class="product-name">
+            ${escapeHTML(p.name)}
+          </div>
+        </td>
+
+        <td>
+          ${
+            p.category
+              ? `<span class="category">
+                   ${escapeHTML(p.category)}
+                 </span>`
+              : '<span style="color:#475569;">—</span>'
+          }
+        </td>
+
+        <td class="price">
+          ₹${Number(p.price).toFixed(2)}
+        </td>
+
+        <td>
+          <span class="stock">
+            <span class="stock-dot"></span>
+            ${escapeHTML(p.stock_qty)}
+          </span>
+        </td>
+
+        <td>
+          <div class="row-actions">
+
+            <button
+              onclick='editProduct(${JSON.stringify(p)})'
+            >
+              Edit
+            </button>
+
+            <button
+              class="danger"
+              onclick="deleteProduct(${Number(p.id)})"
+            >
+              Delete
+            </button>
+
+          </div>
+        </td>
+      `;
+
+      tbody.appendChild(row);
+
+    });
+
+    document.getElementById('catalogValue').textContent =
+      formatCurrency(inventoryValue);
+
+    if (!data.length) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            <div class="empty">
+              No products found. Add your first product above.
+            </div>
+          </td>
+        </tr>
+      `;
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    showMsg(
+      'productMsg',
+      {
+        success: false,
+        message: 'Unable to load products.'
+      }
+    );
+
+  }
+
+}
+
+function editProduct(p) {
+
+  document.getElementById('p_id').value = p.id;
+
+  document.getElementById('p_name').value =
+    p.name || '';
+
+  document.getElementById('p_category').value =
+    p.category || '';
+
+  document.getElementById('p_price').value =
+    p.price || '';
+
+  document.getElementById('p_stock').value =
+    p.stock_qty || '';
+
+  document
+    .getElementById('products')
+    .scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+
+}
+
+function resetProductForm() {
+
+  document
+    .getElementById('productForm')
+    .reset();
+
+  document.getElementById('p_id').value = '';
+
+  document.getElementById('productMsg').textContent = '';
+
+}
+
+document
+  .getElementById('productForm')
+  .addEventListener('submit', async e => {
+
+    e.preventDefault();
+
+    const id =
+      document.getElementById('p_id').value;
+
+    const payload = {
+
+      name:
+        document.getElementById('p_name').value,
+
+      category:
+        document.getElementById('p_category').value,
+
+      price:
+        parseFloat(
+          document.getElementById('p_price').value
+        ),
+
+      stock_qty:
+        parseInt(
+          document.getElementById('p_stock').value || '0',
+          10
+        ),
+
+    };
+
+    try {
+
+      const url =
+        id
+          ? `${API.products}?id=${encodeURIComponent(id)}`
+          : API.products;
+
+      const method =
+        id ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const json = await res.json();
+
+      showMsg('productMsg', json);
+
+      if (json.success) {
+
+        resetProductForm();
+
+        await loadProducts();
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMsg(
+        'productMsg',
+        {
+          success: false,
+          message: 'Unable to save product.'
+        }
+      );
+
+    }
+
+  });
+
+async function deleteProduct(id) {
+
+  if (!confirm('Delete this product?')) {
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      `${API.products}?id=${encodeURIComponent(id)}`,
+      {
+        method: 'DELETE'
+      }
+    );
+
+    const json = await res.json();
+
+    showMsg('productMsg', json);
+
+    await loadProducts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showMsg(
+      'productMsg',
+      {
+        success: false,
+        message: 'Unable to delete product.'
+      }
+    );
+
+  }
+
+}
+
+/* =========================================================
+   USERS
+========================================================= */
+
+async function loadUsers() {
+
+  try {
+
+    const res = await fetch(API.users);
+
+    if (!res.ok) {
+      throw new Error('Failed to load users');
+    }
+
+    const json = await res.json();
+
+    const data = json.data || [];
+
+    const tbody =
+      document.getElementById('userTable');
+
+    tbody.innerHTML = '';
+
+    document.getElementById('userCount').textContent =
+      data.length;
+
+    data.forEach(u => {
+
+      const row =
+        document.createElement('tr');
+
+      const shortId =
+        (u.user_id || '').slice(0, 8);
+
+      row.innerHTML = `
+
+        <td class="id-cell">
+          ${escapeHTML(shortId)}…
+        </td>
+
+        <td>
+          <div class="user-name">
+            ${escapeHTML(u.name || '')}
+          </div>
+        </td>
+
+        <td>
+          ${escapeHTML(u.email || '')}
+        </td>
+
+        <td>
+          ${escapeHTML(u.phone || '—')}
+        </td>
+
+        <td>
+          ${escapeHTML(u.city || '—')}
+        </td>
+
+        <td>
+
+          <div class="row-actions">
+
+            <button
+              onclick='editUser(${JSON.stringify(u)})'
+            >
+              Edit
+            </button>
+
+            <button
+              class="danger"
+              onclick="deleteUser('${escapeJS(u.user_id)}')"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </td>
+
+      `;
+
+      tbody.appendChild(row);
+
+    });
+
+    if (!data.length) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            <div class="empty">
+              No users found. Add your first user above.
+            </div>
+          </td>
+        </tr>
+      `;
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    showMsg(
+      'userMsg',
+      {
+        success: false,
+        message: 'Unable to load users.'
+      }
+    );
+
+  }
+
+}
+
+function editUser(u) {
+
+  document.getElementById('u_id').value =
+    u.user_id || '';
+
+  document.getElementById('u_name').value =
+    u.name || '';
+
+  document.getElementById('u_email').value =
+    u.email || '';
+
+  document.getElementById('u_phone').value =
+    u.phone || '';
+
+  document.getElementById('u_city').value =
+    u.city || '';
+
+  document
+    .getElementById('users')
+    .scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+
+}
+
+function resetUserForm() {
+
+  document
+    .getElementById('userForm')
+    .reset();
+
+  document.getElementById('u_id').value = '';
+
+  document.getElementById('userMsg').textContent = '';
+
+}
+
+document
+  .getElementById('userForm')
+  .addEventListener('submit', async e => {
+
+    e.preventDefault();
+
+    const id =
+      document.getElementById('u_id').value;
+
+    const payload = {
+
+      name:
+        document.getElementById('u_name').value,
+
+      email:
+        document.getElementById('u_email').value,
+
+      phone:
+        document.getElementById('u_phone').value,
+
+      city:
+        document.getElementById('u_city').value,
+
+    };
+
+    try {
+
+      const url =
+        id
+          ? `${API.users}?user_id=${encodeURIComponent(id)}`
+          : API.users;
+
+      const method =
+        id ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+
+        method,
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify(payload)
+
+      });
+
+      const json = await res.json();
+
+      showMsg('userMsg', json);
+
+      if (json.success) {
+
+        resetUserForm();
+
+        await loadUsers();
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMsg(
+        'userMsg',
+        {
+          success: false,
+          message: 'Unable to save user.'
+        }
+      );
+
+    }
+
+  });
+
+async function deleteUser(id) {
+
+  if (!confirm('Delete this user?')) {
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      `${API.users}?user_id=${encodeURIComponent(id)}`,
+      {
+        method: 'DELETE'
+      }
+    );
+
+    const json = await res.json();
+
+    showMsg('userMsg', json);
+
+    await loadUsers();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showMsg(
+      'userMsg',
+      {
+        success: false,
+        message: 'Unable to delete user.'
+      }
+    );
+
+  }
+
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function showMsg(elId, json) {
+
+  const el =
+    document.getElementById(elId);
+
+  el.textContent =
+    json.message ||
+    (json.success ? 'Operation completed.' : 'Something went wrong.');
+
+  el.className =
+    'msg ' +
+    (json.success ? 'ok' : 'err');
+
+  setTimeout(() => {
+
+    el.textContent = '';
+
+  }, 5000);
+
+}
+
+function formatCurrency(value) {
+
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0
+  }).format(value);
+
+}
+
+function escapeHTML(value) {
+
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+}
+
+function escapeJS(value) {
+
+  return String(value ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'");
+
+}
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+loadProducts();
+loadUsers();
+
+</script>
+
+</body>
+</html>

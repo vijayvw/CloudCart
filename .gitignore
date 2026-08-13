@@ -1,0 +1,53 @@
+# ============================================================
+# CloudCart .gitignore
+# ============================================================
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Composer dependencies
+/vendor/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# ============================================================
+# Terraform
+# ============================================================
+
+# Terraform working directories
+**/.terraform/
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform plan files
+*.tfplan
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Terraform variable files containing secrets
+terraform.tfvars
+*.auto.tfvars
+
+# Terraform override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# ============================================================
+# Temporary files
+# ============================================================
+
+*.tmp
+*.temp
